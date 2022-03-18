@@ -8,6 +8,8 @@
 
 import os
 import glob
+import pandas as pd
+import streamlit as st
 
 def remove_files():
     if os.path.isdir("data"):
@@ -29,3 +31,27 @@ def savefile(uploaded_file):
             return 0
     except Exception as ex:
         st.write(f"Error {ex} while uploading file: {uploaded_file}")
+
+def read_file(uploaded_file, file_details):
+    dataframe = None
+    if (uploaded_file.name.split(".")[1] == "hdf"):
+        dataframe = pd.read_hdf(f"data/{file_details['name']}")
+    elif (uploaded_file.name.split(".")[1] == "csv"):
+        dataframe = pd.read_csv(f"data/{file_details['name']}")
+
+    return dataframe
+
+def select_algorithm():
+    option = st.selectbox(
+        label='Select Optimisation Algorithm',
+        options=('NotearsLinear', 'NotearsMLP')
+    )
+
+    return option
+
+def threshold_param():
+    threshold = st.slider(
+        'Select filter threshold %',
+        0.0, 1.0, 0.4)
+    return threshold
+
