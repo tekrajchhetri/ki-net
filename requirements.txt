@@ -1,6 +1,8 @@
-python=3.9
+python=3.8
 streamlit
 pandas
 numpy
 networkx[default]
-h5py
+pygraphviz
+torch
+causalnex=0.11.0
