@@ -6,9 +6,8 @@
     <img src="https://www.uar.at/files/assets/content/Logos/SCCH_Logo_Subline_.jpg" width="240px"  alt="SCCH"/>
 </p>
 
-
+![](images/app_screen.png)
 ## Members
-
 - Tek Raj Chhetri (STI Innsbruck)
 - Sareh Aghaei (STI Innsbruck)
 - Assoc.-Prof. Dr. Anna Fensel (STI Innsbruck) 
