@@ -12,8 +12,9 @@ from bayesian_structure_learning import *
 import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
-
+st.set_page_config('KI-Net: Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
 display_logo()
+
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
 st.text("Tek Raj Chhetri")
 def file_upload():
