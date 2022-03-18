@@ -13,9 +13,9 @@ import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
-
+display_logo()
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
-
+st.text("Tek Raj Chhetri")
 def file_upload():
     uploaded_file = st.file_uploader("Upload your file in CSV or HDF format")
     if uploaded_file is not None:
