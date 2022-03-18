@@ -6,14 +6,10 @@
 # @File    : main.py
 # @Software: PyCharm
 
-
-
-import streamlit as st
 from helper import *
 from visualisation import *
 from bayesian_structure_learning import *
 import warnings
-import numpy as np
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
