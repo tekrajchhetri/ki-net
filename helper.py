@@ -44,7 +44,7 @@ def read_file(uploaded_file, file_details):
 def select_algorithm():
     option = st.selectbox(
         label='Select Optimisation Algorithm',
-        options=('NotearsLinear', 'NotearsMLP')
+        options=('Select Algorithm', 'NotearsLinear', 'NotearsMLP'),
     )
 
     return option
@@ -55,3 +55,5 @@ def threshold_param():
         0.0, 1.0, 0.4)
     return threshold
 
+def start_structure_learning():
+    return st.button("Start Bayesian Structure Learning Process")

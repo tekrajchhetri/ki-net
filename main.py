@@ -32,16 +32,19 @@ def file_upload():
                         st.write(dataframe)
                         st.header("Bayesian structure learning configuration")
                         algorithm = select_algorithm()
-                        st.write(f'Selected Optimisation Algorithm: {algorithm}')
-                        threshold = threshold_param()
-                        st.write(f'Selected filter threshold: {threshold*100}%')
-                        st.success("Starting Bayesian Structure Learning Process...")
-                        if algorithm == "NotearsLinear":
-                            sm = start_linear_structure_learning(dataframe)
-                            st.pyplot(visualise_linear(sm, threshold))
+                        if algorithm != "Select Algorithm":
+                            st.write(f'Selected Optimisation Algorithm: {algorithm}')
+                            threshold = threshold_param()
+                            st.write(f'Selected filter threshold: {threshold*100}%')
+                            button_clicked = start_structure_learning()
+                            if button_clicked:
+                                st.success("Starting Bayesian Structure Learning Process...")
+                                if algorithm == "NotearsLinear":
+                                    sm = start_linear_structure_learning(dataframe)
+                                    st.pyplot(visualise_linear(sm, threshold))
 
-                        elif algorithm == "NotearsMLP":
-                            pass
+                                elif algorithm == "NotearsMLP":
+                                    pass
             else:
                 st.alert("Invalid file format, requires either CSV or HDF format")
 
