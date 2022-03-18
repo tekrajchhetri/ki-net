@@ -1,48 +1,56 @@
-from io import StringIO
+# -*- coding: utf-8 -*-
+# @Time    : 18.03.22 10:40
+# @Author  : Tek Raj Chhetri
+# @Email   : tekraj.chhetri@sti2.at
+# @Web     : https://tekrajchhetri.com/
+# @File    : main.py
+# @Software: PyCharm
+
+
 
 import streamlit as st
-import pandas as pd
+from helper import *
+from visualisation import *
+from bayesian_structure_learning import *
+import warnings
 import numpy as np
-import os
-import glob
+warnings.filterwarnings("ignore")
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
-
-def remove_files():
-    if os.path.isdir("data"):
-        files = glob.glob('data/*')
-        for f in files:
-            os.remove(f)
-    else:
-        os.mkdir("data")
-
-    return 1
-def savefile(uploaded_file):
-    try:
-        if remove_files() ==1:
-            with open(os.path.join("data", uploaded_file.name), "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            return 1
-        else:
-            return 0
-    except Exception as ex:
-        st.write(f"Error {ex} while uploading file: {uploaded_file}")
 
 def file_upload():
     uploaded_file = st.file_uploader("Upload your file in CSV or HDF format")
     if uploaded_file is not None:
-        saved_file = savefile(uploaded_file)
-        print(saved_file)
-        file_details = {"name": uploaded_file.name, "type": uploaded_file.type}
+
         try:
-            if (uploaded_file.name.split(".")[1] == "hdf"):
-                dataframe = pd.read_hdf(f"data/{file_details['name']}")
-            elif (uploaded_file.name.split(".")[1] == "csv"):
-                dataframe = pd.read_csv(f"data/{file_details['name']}")
-            st.write(dataframe)
+            file_details = {"name": uploaded_file.name, "type": uploaded_file.type}
+            if uploaded_file.name.split(".")[1] == "hdf" or uploaded_file.name.split(".")[1] == "csv":
+                saved_file = savefile(uploaded_file)
+                if saved_file ==1:
+                    st.success("File uploaded, now reading file for display..")
+                    dataframe = read_file(uploaded_file, file_details)
+                    if dataframe is not None:
+                        st.write(dataframe)
+                        st.header("Bayesian structure learning configuration")
+                        algorithm = select_algorithm()
+                        st.write(f'Selected Optimisation Algorithm: {algorithm}')
+                        threshold = threshold_param()
+                        st.write(f'Selected filter threshold: {threshold*100}%')
+                        st.success("Starting Bayesian Structure Learning Process...")
+                        if algorithm == "NotearsLinear":
+                            sm = start_linear_structure_learning(dataframe)
+                            st.pyplot(visualise_linear(sm, threshold))
+
+                        elif algorithm == "NotearsMLP":
+                            pass
+            else:
+                st.alert("Invalid file format, requires either CSV or HDF format")
+
         except Exception as e:
-            st.write(e)
-            st.write("Invalid file format")
+            error = RuntimeError('Error occured while uploading file.')
+            st.exception(e)
 
 
 if __name__ == '__main__':
