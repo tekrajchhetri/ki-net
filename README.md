@@ -6,7 +6,10 @@
     <img src="https://www.uar.at/files/assets/content/Logos/SCCH_Logo_Subline_.jpg" width="240px"  alt="SCCH"/>
 </p>
 
-![](images/app_screen.png)
+
+https://user-images.githubusercontent.com/52251022/159111347-f51d3958-f0cf-44c5-9369-ac60fef3c250.mp4
+
+ 
 ## Members
 - Tek Raj Chhetri (STI Innsbruck)
 - Sareh Aghaei (STI Innsbruck)
