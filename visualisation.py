@@ -6,24 +6,8 @@
 # @File    : visualisation.py
 # @Software: PyCharm
 
-from causalnex.plots import plot_structure
-import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import streamlit as st
-from causalnex.plots import plot_structure, NODE_STYLE, EDGE_STYLE
 
-def visualise_linear(sm, threshold):
-    sm.remove_edges_below_threshold(threshold)
-    viz = plot_structure(
-        sm,
-        graph_attributes={"scale": "0.5"},
-        all_node_attributes=NODE_STYLE.WEAK,
-        all_edge_attributes=EDGE_STYLE.WEAK,
-    )
-    mpl.rcParams["figure.dpi"] = 120
-    # fig = plt.figure(figsize=(15, 8))  # set figsize
-    return nx.draw_networkx(viz)
 
 def display_logo():
     st.markdown(
@@ -35,3 +19,5 @@ def display_logo():
     </p>
         """, unsafe_allow_html =True
     )
+
+
