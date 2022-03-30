@@ -10,6 +10,8 @@ import os
 import glob
 import pandas as pd
 import streamlit as st
+from streamlit_agraph import Node, Edge, Config
+import networkx as nx
 
 def remove_files():
     if os.path.isdir("data"):
@@ -57,3 +59,53 @@ def threshold_param():
 
 def start_structure_learning():
     return st.button("Start Bayesian Structure Learning Process")
+
+def is_networkxgraph(graph):
+    isNx = (type(graph) == nx.classes.multidigraph.MultiDiGraph or type(graph) == nx.classes.multidigraph.DiGraph)
+    return isNx
+
+def convert_agraph_node(graph):
+    """ Converts the networx graph nodes to agraph nodes
+    :param graph: network graph
+    :return: agraph Node
+    """
+    _nodes = []
+    if is_networkxgraph(graph):
+        for nodelist in list(graph.nodes()):
+            _nodes.append(Node(id=nodelist,
+                               size=400,
+                               ))
+    return _nodes
+
+def zero_error():
+    return "Error occurred. Check your dataset."
+
+def convert_agraph_edge(graph):
+    """Converts the networx graph edges to agraph edges
+    :param graph:  network graph
+    :return: agraph Edge
+    """
+
+    _edges = []
+    if is_networkxgraph(graph):
+
+        for edgelist in list(graph.edges()):
+            s, t = edgelist
+            _edges.append(Edge(source=s,
+                               target=t,
+                               type="CURVE_SMOOTH"))
+
+    return _edges
+
+def gaph_config():
+    config = Config(width=500,
+                    height=500,
+                    directed=True,
+                    nodeHighlightBehavior=True,
+                    highlightColor="#F7A7A6",  # or "blue"
+                    collapsible=True,
+                    node={'labelProperty': 'label'},
+                    link={'labelProperty': 'label', 'renderLabel': False}
+                    )
+    return config
+
