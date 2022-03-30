@@ -40,8 +40,9 @@ def file_upload():
                             if button_clicked:
                                 st.success("Starting Bayesian Structure Learning Process...")
                                 if algorithm == "NotearsLinear":
-                                    sm = start_linear_structure_learning(dataframe)
-                                    st.pyplot(visualise_linear(sm, threshold))
+                                    init_learning_process(datasets=dataframe, threshold=float(threshold))
+
+
 
                                 elif algorithm == "NotearsMLP":
                                     pass
