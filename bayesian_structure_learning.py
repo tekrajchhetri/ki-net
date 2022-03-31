@@ -26,15 +26,47 @@ def is_dag(G):
 
 
 
-def start_linear_structure_learning(dataset, threshold, tabuedge=None):
+def start_linear_structure_learning(dataset, threshold, tabuedge=None,
+                                    use_bias=True,
+                                    use_gpu=False,
+                                    max_iter=100,
+                                    hidden_layer_units=[10,10,10],
+                                    lasso_beta=0.1,
+                                    ridge_beta=0.2):
     """Perform the Bayesian structure learning
     :param dataset: pandas dataframe
-    :return: learned structure
+    :param threshold: threshold for graph filtering
+    :param tabuedge: edges to be removed
+    :param use_bias: Whether to fit a bias parameter in the NOTEARS algorithm
+    :param use_gpu: GPU to use?
+    :param max_iter: steps during optimisation
+    :param hidden_layer_units: hidden layer units
+    :param lasso_beta: l1 regularisation
+    :param ridge_beta: l2 regularisation
+    :return:learned structure as networkx graph
     """
+
     if tabuedge is not None:
-        sm = from_pandas(dataset, tabu_edges=tabuedge)
+        print("structure learning with tabu edges")
+        sm = from_pandas(dataset,
+                         tabu_edges=tabuedge,
+                         use_bias=use_bias,
+                         use_gpu=use_gpu,
+                         max_iter=max_iter,
+                         hidden_layer_units=hidden_layer_units,
+                         lasso_beta=lasso_beta,
+                         ridge_beta=ridge_beta
+                         )
     else:
-        sm = from_pandas(dataset)
+        print("structure learning without tabu edges")
+        sm = from_pandas(dataset,
+                         use_bias=use_bias,
+                         use_gpu=use_gpu,
+                         max_iter=max_iter,
+                         hidden_layer_units=hidden_layer_units,
+                         lasso_beta=lasso_beta,
+                         ridge_beta=ridge_beta
+                         )
     sm.remove_edges_below_threshold(threshold)
     dag_graph = nx.MultiDiGraph(sm)
     if is_dag(dag_graph):
@@ -82,7 +114,7 @@ def make_tabu_edges(source, destination):
             else:
                 tabu_edges.append((source[i], destination[i]))
         if len(tabu_edges) <=0:
-            return {"message":"No selection of Tabu Edges made", "status": 0}
+            return {"message":"No selection of Edges made", "status": 0}
         else:
             return  {"message": tabu_edges, "status":1}
 
@@ -97,6 +129,7 @@ def display_learned_graph(graph):
     return return_value
 
 def init_learning_process(datasets, threshold, tabuedge):
+    print("learning init")
     graph = start_linear_structure_learning(dataset=datasets, threshold=threshold, tabuedge=tabuedge)
     try:
         if graph is not None:
