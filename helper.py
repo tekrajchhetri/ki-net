@@ -46,15 +46,15 @@ def read_file(uploaded_file, file_details):
 def select_algorithm():
     option = st.selectbox(
         label='Select Optimisation Algorithm',
-        options=('Select Algorithm', 'NotearsLinear', 'NotearsMLP'),
+        options=('Select Algorithm', 'Notears'),
     )
 
     return option
 
-def threshold_param():
+def slider(label,min_value, max_value, defaultselected, step, key):
     threshold = st.slider(
-        'Select filter threshold %',
-        0.0, 1.0, 0.4)
+        label=label,
+        min_value=min_value, max_value=max_value, value=defaultselected,step=step, key=key)
     return threshold
 
 def multiselect(options, key, text=""):
@@ -63,8 +63,8 @@ def multiselect(options, key, text=""):
         label=text,
      options=options)
 
-def start_structure_learning():
-    return st.button("Start Bayesian Structure Learning Process")
+def start_structure_learning(text,key):
+    return st.button(label=text,key=key)
 
 def is_networkxgraph(graph):
     isNx = (type(graph) == nx.classes.multidigraph.MultiDiGraph or type(graph) == nx.classes.multidigraph.DiGraph)
@@ -82,6 +82,7 @@ def convert_agraph_node(graph):
                                size=400,
                                ))
     return _nodes
+
 
 def zero_error():
     return "Error occurred. Check your dataset."
@@ -107,8 +108,8 @@ def convert_agraph_edge(graph):
     return _edges
 
 def gaph_config():
-    config = Config(width=500,
-                    height=500,
+    config = Config(width=600,
+                    height=800,
                     directed=True,
                     nodeHighlightBehavior=True,
                     highlightColor="#F7A7A6",  # or "blue"
@@ -117,4 +118,19 @@ def gaph_config():
                     link={'labelProperty': 'label', 'renderLabel': False}
                     )
     return config
+
+def checkbox(label, key):
+    return st.checkbox(label=label, key=key)
+
+def check_hidden_layer_input(input_text):
+    if type(input_text) == str:
+        strlist = input_text.split(",")
+        check_res = [int(ip) if ip.isdigit() else False for ip in strlist]
+        return None if False in check_res else check_res
+    else:
+        return None
+
+
+
+
 

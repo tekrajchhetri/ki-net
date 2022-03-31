@@ -26,11 +26,12 @@ def is_dag(G):
 
 
 
-def start_linear_structure_learning(dataset, threshold, tabuedge=None,
+def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
+                                    tabuedge=None,
                                     use_bias=True,
                                     use_gpu=False,
                                     max_iter=100,
-                                    hidden_layer_units=[10,10,10],
+                                    hidden_layer_units=None,
                                     lasso_beta=0.1,
                                     ridge_beta=0.2):
     """Perform the Bayesian structure learning
@@ -46,9 +47,10 @@ def start_linear_structure_learning(dataset, threshold, tabuedge=None,
     :return:learned structure as networkx graph
     """
 
-    if tabuedge is not None:
-        print("structure learning with tabu edges")
-        sm = from_pandas(dataset,
+
+    print(f"structure learning initiated with tabuedge:{tabuedge}, use_bias:{use_bias},use_gpu:{use_gpu}, max_iter:{max_iter},hidden_layer_units={hidden_layer_units},"
+          f"lasso_beta:{lasso_beta},ridge_beta:{ridge_beta}")
+    sm = from_pandas(dataset,
                          tabu_edges=tabuedge,
                          use_bias=use_bias,
                          use_gpu=use_gpu,
@@ -57,17 +59,9 @@ def start_linear_structure_learning(dataset, threshold, tabuedge=None,
                          lasso_beta=lasso_beta,
                          ridge_beta=ridge_beta
                          )
-    else:
-        print("structure learning without tabu edges")
-        sm = from_pandas(dataset,
-                         use_bias=use_bias,
-                         use_gpu=use_gpu,
-                         max_iter=max_iter,
-                         hidden_layer_units=hidden_layer_units,
-                         lasso_beta=lasso_beta,
-                         ridge_beta=ridge_beta
-                         )
     sm.remove_edges_below_threshold(threshold)
+    if domainknowledge is not None:
+        sm.add_edges_from(domainknowledge, origin="expert")
     dag_graph = nx.MultiDiGraph(sm)
     if is_dag(dag_graph):
         return nx.MultiDiGraph(sm)
@@ -102,8 +96,8 @@ def to_convert_to_SDOW_format(G):
 
         return pd.DataFrame(list_for_df)
 
-def make_tabu_edges(source, destination):
-    tabu_edges = []
+def make_edges(source, destination,isdomain=False):
+    make_edges = []
     message = {}
     if len(source) != len(destination):
         return {"message": invalid_selection(), "status":0}
@@ -112,11 +106,11 @@ def make_tabu_edges(source, destination):
             if source[i] == destination[i]:
                 return {"message": "Invalid selection, source and destination cannot contain same node.", "status": 0}
             else:
-                tabu_edges.append((source[i], destination[i]))
-        if len(tabu_edges) <=0:
+                make_edges.append((source[i], destination[i]))
+        if len(make_edges) <=0:
             return {"message":"No selection of Edges made", "status": 0}
         else:
-            return  {"message": tabu_edges, "status":1}
+            return  {"message": make_edges, "status":1}
 
 
 
@@ -128,9 +122,25 @@ def display_learned_graph(graph):
                           config=gaph_config())
     return return_value
 
-def init_learning_process(datasets, threshold, tabuedge):
+def init_learning_process(dataset, threshold, domainknowledge,
+                                    tabuedge,
+                                    use_bias,
+                                    use_gpu,
+                                    max_iter,
+                                    hidden_layer_units,
+                                    lasso_beta,
+                                    ridge_beta):
     print("learning init")
-    graph = start_linear_structure_learning(dataset=datasets, threshold=threshold, tabuedge=tabuedge)
+    graph = start_linear_structure_learning(dataset=dataset,
+                                            domainknowledge=domainknowledge,
+                                            threshold=threshold,
+                                            use_bias=use_bias,
+                                            use_gpu=use_gpu,
+                                            max_iter=max_iter,
+                                            hidden_layer_units=hidden_layer_units,
+                                            lasso_beta=lasso_beta,
+                                            ridge_beta=ridge_beta,
+                                            tabuedge=tabuedge)
     try:
         if graph is not None:
             return display_learned_graph(graph)
