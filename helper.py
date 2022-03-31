@@ -57,6 +57,12 @@ def threshold_param():
         0.0, 1.0, 0.4)
     return threshold
 
+def multiselect(options, key, text=""):
+    return  st.multiselect(
+        key=key,
+        label=text,
+     options=options)
+
 def start_structure_learning():
     return st.button("Start Bayesian Structure Learning Process")
 
@@ -79,6 +85,9 @@ def convert_agraph_node(graph):
 
 def zero_error():
     return "Error occurred. Check your dataset."
+
+def invalid_selection():
+    return "Number of nodes in source and destination should be equal."
 
 def convert_agraph_edge(graph):
     """Converts the networx graph edges to agraph edges

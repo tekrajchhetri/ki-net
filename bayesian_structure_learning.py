@@ -13,7 +13,9 @@ from streamlit_agraph import agraph
 from helper import convert_agraph_node
 from helper import convert_agraph_edge
 from helper import gaph_config
-from helper import zero_error, is_networkxgraph
+from helper import zero_error
+from helper import  is_networkxgraph
+from helper import invalid_selection
 
 def is_dag(G):
     """Checks if the graph is DAG
@@ -24,12 +26,15 @@ def is_dag(G):
 
 
 
-def start_linear_structure_learning(dataset, threshold):
+def start_linear_structure_learning(dataset, threshold, tabuedge=None):
     """Perform the Bayesian structure learning
     :param dataset: pandas dataframe
     :return: learned structure
     """
-    sm = from_pandas(dataset)
+    if tabuedge is not None:
+        sm = from_pandas(dataset, tabu_edges=tabuedge)
+    else:
+        sm = from_pandas(dataset)
     sm.remove_edges_below_threshold(threshold)
     dag_graph = nx.MultiDiGraph(sm)
     if is_dag(dag_graph):
@@ -65,6 +70,25 @@ def to_convert_to_SDOW_format(G):
 
         return pd.DataFrame(list_for_df)
 
+def make_tabu_edges(source, destination):
+    tabu_edges = []
+    message = {}
+    if len(source) != len(destination):
+        return {"message": invalid_selection(), "status":0}
+    else:
+        for i in range(len(source)):
+            if source[i] == destination[i]:
+                return {"message": "Invalid selection, source and destination cannot contain same node.", "status": 0}
+            else:
+                tabu_edges.append((source[i], destination[i]))
+        if len(tabu_edges) <=0:
+            return {"message":"No selection of Tabu Edges made", "status": 0}
+        else:
+            return  {"message": tabu_edges, "status":1}
+
+
+
+
 def display_learned_graph(graph):
 
     return_value = agraph(nodes=convert_agraph_node(graph),
@@ -72,8 +96,8 @@ def display_learned_graph(graph):
                           config=gaph_config())
     return return_value
 
-def init_learning_process(datasets, threshold):
-    graph = start_linear_structure_learning(dataset=datasets, threshold=threshold)
+def init_learning_process(datasets, threshold, tabuedge):
+    graph = start_linear_structure_learning(dataset=datasets, threshold=threshold, tabuedge=tabuedge)
     try:
         if graph is not None:
             return display_learned_graph(graph)

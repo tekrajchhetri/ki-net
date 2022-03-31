@@ -30,6 +30,17 @@ def file_upload():
                     dataframe = read_file(uploaded_file, file_details)
                     if dataframe is not None:
                         st.write(dataframe)
+                        st.header("Tabu Edge(s)")
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.subheader("Source")
+                            sourceSelected = multiselect(options=dataframe.columns, key="sourcetabu")
+                        with col2:
+                            st.subheader("Destination")
+                            destinationSelected = multiselect(options=dataframe.columns, key="desttabu")
+                        st.caption("Selected Tabu Edges")
+                        tabuEdges = make_tabu_edges(sourceSelected, destinationSelected)
+                        st.code(tabuEdges["message"])
                         st.header("Bayesian structure learning configuration")
                         algorithm = select_algorithm()
                         if algorithm != "Select Algorithm":
@@ -40,7 +51,10 @@ def file_upload():
                             if button_clicked:
                                 st.success("Starting Bayesian Structure Learning Process...")
                                 if algorithm == "NotearsLinear":
-                                    init_learning_process(datasets=dataframe, threshold=float(threshold))
+                                    if tabuEdges["status"] == 1:
+                                        init_learning_process(datasets=dataframe, threshold=float(threshold), tabuedge=tabuEdges["message"])
+                                    else:
+                                        init_learning_process(datasets=dataframe, threshold=float(threshold), tabuedge=None)
 
 
 
