@@ -108,6 +108,9 @@ def convert_agraph_edge(graph):
     return _edges
 
 def gaph_config():
+    """ Set the configuration to the interactive window for DAG network visualisation
+    :return: Config
+    """
     config = Config(width=600,
                     height=800,
                     directed=True,
@@ -118,6 +121,8 @@ def gaph_config():
                     link={'labelProperty': 'label', 'renderLabel': False}
                     )
     return config
+
+
 
 def checkbox(label, key):
     return st.checkbox(label=label, key=key)
