@@ -48,8 +48,14 @@ def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
     """
 
 
-    print(f"structure learning initiated with tabuedge:{tabuedge}, use_bias:{use_bias},use_gpu:{use_gpu}, max_iter:{max_iter},hidden_layer_units={hidden_layer_units},"
-          f"lasso_beta:{lasso_beta},ridge_beta:{ridge_beta}")
+    print(f"structure learning initiated with tabuedge:{tabuedge}, "
+          f"use_bias:{use_bias},"
+          f"use_gpu:{use_gpu}, "
+          f"max_iter:{max_iter},"
+          f"hidden_layer_units={hidden_layer_units},"
+          f"lasso_beta:{lasso_beta}, "
+          f"domainknowledge={domainknowledge} "
+          f"ridge_beta:{ridge_beta}")
     sm = from_pandas(dataset,
                          tabu_edges=tabuedge,
                          use_bias=use_bias,
@@ -130,7 +136,6 @@ def init_learning_process(dataset, threshold, domainknowledge,
                                     hidden_layer_units,
                                     lasso_beta,
                                     ridge_beta):
-    print("learning init")
     graph = start_linear_structure_learning(dataset=dataset,
                                             domainknowledge=domainknowledge,
                                             threshold=threshold,
