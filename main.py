@@ -137,11 +137,13 @@ def start():
                                 st.text(f'Tabu Edges: {tabuEdges["message"]}')
                                 st.text(f'Domain Knowledge: {doaminKg["message"]}')
                                 st.text(f'Hidden layers: {hiddenlayer}')
+                                if doaminKg["status"] == 0:
+                                    doaminKg["message"] = None
 
+                                if tabuEdges["status"] == 0:
+                                    tabuEdges["message"] = None
 
-                                if tabuEdges["status"] == 1:
-                                    print("Tabu")
-                                    init_learning_process(dataset=dataframe,
+                                init_learning_process(dataset=dataframe,
                                             threshold=float(threshold),
                                             use_bias=bias_enable,
                                             use_gpu=enable_gpu,
@@ -151,9 +153,6 @@ def start():
                                             ridge_beta=ridge_reg,
                                             tabuedge=tabuEdges["message"],
                                             domainknowledge=doaminKg["message"] )
-                                else:
-                                    print("No Tabu")
-                                    init_learning_process(datasets=dataframe, threshold=float(threshold), tabuedge=None)
                             else:
                                 st.code({"Select algorithm"})
             else:
