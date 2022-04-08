@@ -143,7 +143,7 @@ def start():
                                 if tabuEdges["status"] == 0:
                                     tabuEdges["message"] = None
 
-                                init_learning_process(dataset=dataframe,
+                                learned_dag = init_learning_process(dataset=dataframe,
                                             threshold=float(threshold),
                                             use_bias=bias_enable,
                                             use_gpu=enable_gpu,
@@ -153,6 +153,10 @@ def start():
                                             ridge_beta=ridge_reg,
                                             tabuedge=tabuEdges["message"],
                                             domainknowledge=doaminKg["message"] )
+
+                                display_learned_graph(learned_dag)
+                                st.write(to_convert_to_SDOW_format(learned_dag))
+
                             else:
                                 st.code({"Select algorithm"})
             else:
