@@ -67,7 +67,9 @@ def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
                          )
     sm.remove_edges_below_threshold(threshold)
     if domainknowledge is not None:
-        sm.add_edges_from(domainknowledge, origin="expert")
+        sm.add_edges_from(domainknowledge,
+                                   origin="expert",
+                                   weight=1)
     dag_graph = nx.MultiDiGraph(sm)
     if is_dag(dag_graph):
         return nx.MultiDiGraph(sm)
@@ -80,27 +82,32 @@ def to_convert_to_SDOW_format(G):
     :param graph: networkx graph
     :return: pandas DataFrame
     """
+    list_for_df = []
     graph = G.adjacency()
     if is_networkxgraph(G):
-        list_for_df = []
         for adjacency_graph_dictionary in graph:
+            # print(adjacency_graph_dictionary)
             source = adjacency_graph_dictionary[0]
             for dest in adjacency_graph_dictionary[1]:
-                if type(graph) == nx.classes.multidigraph.MultiDiGraph:
-                    list_for_df.append([source,
+                if type(G) == nx.classes.multidigraph.MultiDiGraph:
+                    make_df_list = [source,
                                         dest,
                                         adjacency_graph_dictionary[1][dest][0]["origin"],
                                         adjacency_graph_dictionary[1][dest][0]["weight"]
-                                        ])
+                                        ]
+                    list_for_df.append(make_df_list)
 
-                elif type(graph) == nx.classes.multidigraph.DiGraph:
-                    list_for_df.append([source,
+                elif type(G) == nx.classes.multidigraph.DiGraph:
+                    make_df_list = [source,
                                         dest,
                                         adjacency_graph_dictionary[1][dest]["origin"],
                                         adjacency_graph_dictionary[1][dest]["weight"]
-                                        ])
+                                        ]
+                    list_for_df.append(make_df_list)
 
-        return pd.DataFrame(list_for_df)
+
+
+        return pd.DataFrame(list_for_df, columns=["Source", "Destination", "Origin", "Weight"])
 
 def make_edges(source, destination,isdomain=False):
     make_edges = []
@@ -148,7 +155,7 @@ def init_learning_process(dataset, threshold, domainknowledge,
                                             tabuedge=tabuedge)
     try:
         if graph is not None:
-            return display_learned_graph(graph)
+            return graph
         else:
             return zero_error()
     except  Exception as e:
