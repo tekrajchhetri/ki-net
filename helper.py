@@ -85,7 +85,8 @@ def convert_agraph_node(graph):
 
 
 def zero_error():
-    return "Error occurred. Check your dataset."
+    return "Error occurred. It could either be due to dataset or the configurations are too strong that model didn't " \
+           "learn or was filtered out. Try adjusting the configuration parameters or checking dataset."
 
 def invalid_selection():
     return "Number of nodes in source and destination should be equal."
@@ -122,7 +123,22 @@ def gaph_config():
                     )
     return config
 
+@st.cache
+def convert_df(df):
+    return  df.to_csv().encode('utf-8')
 
+
+def preprocess_data(df):
+    """Standardise and impute the values of the dataframe
+    :param df: input pandas dataframe
+    :return: preprocessed dataframe
+    """
+    from sklearn import preprocessing
+    from sklearn.impute import SimpleImputer
+    column_name = list(df.columns)
+    imp = SimpleImputer().fit_transform(df)
+    standard_impute = preprocessing.MinMaxScaler().fit_transform(imp)
+    return pd.DataFrame(standard_impute, columns=column_name)
 
 def checkbox(label, key):
     return st.checkbox(label=label, key=key)
