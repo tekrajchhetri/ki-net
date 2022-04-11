@@ -109,7 +109,12 @@ def to_convert_to_SDOW_format(G):
 
         return pd.DataFrame(list_for_df, columns=["Source", "Destination", "Origin", "Weight"])
 
-def make_edges(source, destination,isdomain=False):
+def make_edges(source, destination):
+    """Transform selected node options to graphs
+    :param source: Selected source node to make connection with destination node
+    :param destination: Destination node to be connected to source node
+    :return: dictionary
+    """
     make_edges = []
     message = {}
     if len(source) != len(destination):
@@ -129,6 +134,10 @@ def make_edges(source, destination,isdomain=False):
 
 
 def display_learned_graph(graph):
+    """convert to agraph for displaying
+    :param graph: networkx graph
+    :return: agraph
+    """
 
     return_value = agraph(nodes=convert_agraph_node(graph),
                           edges=convert_agraph_edge(graph),
@@ -143,6 +152,19 @@ def init_learning_process(dataset, threshold, domainknowledge,
                                     hidden_layer_units,
                                     lasso_beta,
                                     ridge_beta):
+    """initiate the structure learning process
+    :param dataset: input dataset i.e., dataframe
+    :param threshold: filter threshold
+    :param domainknowledge: domain knowledge or the connection between nodes that should exist
+    :param tabuedge: connection that is forbidden
+    :param use_bias:  Whether to fit a bias parameter in the NOTEARS algorithm
+    :param use_gpu: If take benefits of available GPU for learning
+    :param max_iter: steps during optimisation
+    :param hidden_layer_units: hidden layers for mlp
+    :param lasso_beta: l1 regularization
+    :param ridge_beta: l2 regularization
+    :return: learned networkx graph or boolean
+    """
     graph = start_linear_structure_learning(dataset=dataset,
                                             domainknowledge=domainknowledge,
                                             threshold=threshold,
@@ -157,7 +179,7 @@ def init_learning_process(dataset, threshold, domainknowledge,
         if graph is not None:
             return graph
         else:
-            return zero_error()
+            return False
     except  Exception as e:
         print(e)
 
