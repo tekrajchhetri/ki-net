@@ -109,6 +109,21 @@ def to_convert_to_SDOW_format(G):
 
         return pd.DataFrame(list_for_df, columns=["Source", "Destination", "Origin", "Weight"])
 
+def is_same(source, destination):
+    if source == destination:
+        return True
+    else:
+        return False
+
+def same_node_error():
+    return {"message": "Invalid selection, source and destination cannot contain same node.", "status": 0}
+
+
+def no_destination_selected():
+    return {"message": "Destination cannot be empty.", "status": 0}
+
+
+
 def make_edges(source, destination):
     """Transform selected node options to graphs
     :param source: Selected source node to make connection with destination node
@@ -116,19 +131,30 @@ def make_edges(source, destination):
     :return: dictionary
     """
     make_edges = []
-    message = {}
-    if len(source) != len(destination):
+    k = len(destination) - 1
+    if len(source) < len(destination):
         return {"message": invalid_selection(), "status":0}
     else:
-        for i in range(len(source)):
-            if source[i] == destination[i]:
-                return {"message": "Invalid selection, source and destination cannot contain same node.", "status": 0}
-            else:
-                make_edges.append((source[i], destination[i]))
-        if len(make_edges) <=0:
-            return {"message":"No selection of Edges made", "status": 0}
+        if len(destination) > 0:
+            for i in range(len(source)):
+                if i > k:
+                    if not is_same(source[i], destination[k]):
+                        make_edges.append((source[i], destination[k]))
+                    else:
+                        return same_node_error()
+
+                else:
+                    if not is_same(source[i], destination[k]):
+                        make_edges.append((source[i], destination[i]))
+                    else:
+                        return same_node_error()
         else:
-            return  {"message": make_edges, "status":1}
+            return no_destination_selected()
+
+    if len(make_edges) <=0:
+        return {"message":"No selection of Edges made", "status": 0}
+    else:
+        return  {"message": make_edges, "status":1}
 
 
 

@@ -89,7 +89,7 @@ def zero_error():
            "learn or was filtered out. Try adjusting the configuration parameters or checking dataset."
 
 def invalid_selection():
-    return "Number of nodes in source and destination should be equal."
+    return "Invalid selection. Source node should be greater than or equal to destination."
 
 def convert_agraph_edge(graph):
     """Converts the networx graph edges to agraph edges
@@ -112,8 +112,8 @@ def gaph_config():
     """ Set the configuration to the interactive window for DAG network visualisation
     :return: Config
     """
-    config = Config(width=600,
-                    height=800,
+    config = Config(width=900,
+                    height=1000,
                     directed=True,
                     nodeHighlightBehavior=True,
                     highlightColor="#F7A7A6",  # or "blue"
