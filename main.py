@@ -8,7 +8,7 @@
 
 from helper import *
 from visualisation import *
-from bayesian_structure_learning import *
+from graph_learn import *
 import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)

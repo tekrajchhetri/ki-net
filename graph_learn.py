@@ -3,7 +3,7 @@
 # @Author  : Tek Raj Chhetri
 # @Email   : tekraj.chhetri@sti2.at
 # @Web     : https://tekrajchhetri.com/
-# @File    : bayesian_structure_learning.py
+# @File    : graph_learn.py
 # @Software: PyCharm
 
 from causalnex.structure.pytorch.notears import from_pandas
