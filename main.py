@@ -143,7 +143,7 @@ def start():
                                 if tabuEdges["status"] == 0:
                                     tabuEdges["message"] = None
 
-                                learned_dag = init_learning_process(dataset=dataframe,
+                                learned_dag = init_learning_process(dataset=preprocess_data(dataframe),
                                             threshold=float(threshold),
                                             use_bias=bias_enable,
                                             use_gpu=enable_gpu,
@@ -154,8 +154,13 @@ def start():
                                             tabuedge=tabuEdges["message"],
                                             domainknowledge=doaminKg["message"] )
 
-                                display_learned_graph(learned_dag)
-                                st.write(to_convert_to_SDOW_format(learned_dag))
+                                if learned_dag == False:
+                                    st.error(zero_error())
+                                else:
+                                    display_learned_graph(learned_dag)
+                                    dagdf = to_convert_to_SDOW_format(learned_dag)
+                                    dagdf.to_csv("b.csv")
+                                    st.write(dagdf)
 
                             else:
                                 st.code({"Select algorithm"})
