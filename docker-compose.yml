@@ -1,0 +1,14 @@
+version: '3'
+services:
+  tekkinetbayesian:
+    image: tekrajchhetri/kinet
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - PYTHONBUFFERED=1
+    volumes:
+      - ./:/app
+    ports:
+      - '8505:8501'
