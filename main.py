@@ -16,7 +16,7 @@ st.set_page_config('KI-Net: Optimising Manufacturing Process with Bayesian Learn
 display_logo()
 
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
-st.text("Tek Raj Chhetri")
+st.text("PI: Tek Raj Chhetri")
 
 
 def start():
