@@ -16,6 +16,8 @@ from helper import gaph_config
 from helper import zero_error
 from helper import  is_networkxgraph
 from helper import invalid_selection
+import types
+from owlready2 import *
 
 def is_dag(G):
     """Checks if the graph is DAG
@@ -75,6 +77,46 @@ def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
         return nx.MultiDiGraph(sm)
     else:
         return None
+
+def capitalise_word(input_word):
+    cap_word =  ''.join([word.capitalize() for word in input_word.split()])
+    return cap_word.strip()
+
+
+def transform_graph_to_ontology(G):
+    """Take input networkx MultiDiGraph and convert to ontology
+    :param G: networkx MultiDiGraph
+    :return: owl ontology or dictionary
+    """
+    class_mapper = {}
+    object_class_mapper = {}
+    if type(G) == nx.classes.multidigraph.MultiDiGraph:
+        onto_sensor = get_ontology("https://finaltestobj.owl#")
+        with onto_sensor:
+            for class_name in list(G.nodes()):
+                capitalise_class_name = capitalise_word(class_name)
+                cclass_name = types.new_class(f"{capitalise_class_name}", (Thing,))
+                class_mapper[capitalise_class_name] = cclass_name
+
+            for g in list(G.adjacency()):
+                if bool(g[1]):
+                    objpropclass_name = types.new_class(f"is_influenced_by_{capitalise_word(g[0])}", (ObjectProperty,))
+                    object_class_mapper[f"is_influenced_by_{capitalise_word(g[0])}"] = objpropclass_name
+
+                    datapropclass_name = types.new_class("has_influence_factor_of", (DataProperty, FunctionalProperty,))
+                    class_mapper[capitalise_word(g[0])].is_a.append(datapropclass_name.some(float))
+
+                    for restriction_class_name in [capitalise_word(word) for word in list(g[1].keys())]:
+                        datapropclass_name_origin = types.new_class("origin_from", (DataProperty, FunctionalProperty,))
+                        class_mapper[restriction_class_name].is_a.append(datapropclass_name_origin.some(str))
+                        class_mapper[capitalise_word(g[0])].is_a.append(
+                            object_class_mapper[f"is_influenced_by_{capitalise_word(g[0])}"].some(
+                                class_mapper[restriction_class_name]))
+        return onto_sensor
+
+
+    else:
+        return {"message": "Graph must be of type nx.classes.multidigraph.MultiDiGraph", "status": 0}
 
 
 def to_convert_to_SDOW_format(G):
