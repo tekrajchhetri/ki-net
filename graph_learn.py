@@ -90,8 +90,10 @@ def transform_graph_to_ontology(G):
     """
     class_mapper = {}
     object_class_mapper = {}
+    originated_domain = {}
+    influence_domain = {}
     if type(G) == nx.classes.multidigraph.MultiDiGraph:
-        onto_sensor = get_ontology("https://finaltestobj.owl#")
+        onto_sensor = get_ontology("https://checking.owl#")
         with onto_sensor:
             for class_name in list(G.nodes()):
                 capitalise_class_name = capitalise_word(class_name)
@@ -100,23 +102,30 @@ def transform_graph_to_ontology(G):
 
             for g in list(G.adjacency()):
                 if bool(g[1]):
-                    objpropclass_name = types.new_class(f"is_influenced_by_{capitalise_word(g[0])}", (ObjectProperty,))
-                    object_class_mapper[f"is_influenced_by_{capitalise_word(g[0])}"] = objpropclass_name
+                    objpropclass_name = types.new_class(f"isInfluencedBy{capitalise_word(g[0])}", (ObjectProperty,))
+                    objpropclass_name.domain.append(class_mapper[capitalise_word(g[0])])
+                    objpropclass_name.range = [class_mapper[capitalise_word(word)] for word in list(g[1].keys())]
 
-                    datapropclass_name = types.new_class("has_influence_factor_of", (DataProperty, FunctionalProperty,))
-                    class_mapper[capitalise_word(g[0])].is_a.append(datapropclass_name.some(float))
+                for restriction_class_name in [word for word in list(g[1].keys())]:
+                    datapropclass_name_origin = types.new_class(f"isOriginatedFrom{capitalise_word(g[0])}",
+                                                                (DataProperty, FunctionalProperty,))
+                    datapropclass_name_origin.domain.append(class_mapper[capitalise_word(restriction_class_name)])
+                    datapropclass_name_origin.range.append(str)
 
-                    for restriction_class_name in [capitalise_word(word) for word in list(g[1].keys())]:
-                        datapropclass_name_origin = types.new_class("origin_from", (DataProperty, FunctionalProperty,))
-                        class_mapper[restriction_class_name].is_a.append(datapropclass_name_origin.some(str))
-                        class_mapper[capitalise_word(g[0])].is_a.append(
-                            object_class_mapper[f"is_influenced_by_{capitalise_word(g[0])}"].some(
-                                class_mapper[restriction_class_name]))
+                    datapropclass_name = types.new_class(f"hasInfluenceFactorOf{capitalise_word(g[0])}",
+                                                         (DataProperty, FunctionalProperty,))
+                    datapropclass_name.domain.append(class_mapper[capitalise_word(restriction_class_name)])
+                    datapropclass_name.range = [float]
+
+                    a = class_mapper[capitalise_word(restriction_class_name)](
+                        capitalise_word(restriction_class_name).lower())
+                    datapropclass_name_origin[a].append(g[1][restriction_class_name][0]["weight"])
+                    datapropclass_name[a].append(g[1][restriction_class_name][0]["origin"])
+
         return onto_sensor
 
-
     else:
-        return {"message": "Graph must be of type nx.classes.multidigraph.MultiDiGraph", "status": 0}
+        sys.stdout.write("Graph must be of type nx.classes.multidigraph.MultiDiGraph")
 
 
 def to_convert_to_SDOW_format(G):
