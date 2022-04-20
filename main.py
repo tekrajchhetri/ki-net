@@ -13,13 +13,51 @@ import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.set_page_config('KI-Net: Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
-display_logo()
+
+st.markdown('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">', unsafe_allow_html=True)
+st.markdown('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>', unsafe_allow_html=True)
+st.markdown("""
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3498DB;">
+  <a class="navbar-brand" href="#">KI-Net</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="?tab=home">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="?tab=visualise">Visualise</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="?tab=about">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+""", unsafe_allow_html=True)
+
+# current_value = get_fragment(key="asdf")
+
+query_params = st.experimental_get_query_params()
+if not query_params:
+    query_params['tab']="home"
+    st.experimental_set_query_params(**query_params)
+
+if "tab" in query_params:
+    active_tab = query_params["tab"][0]
+else:
+    active_tab = "home"
+
+if active_tab not in ['home','about','visualise']:
+    st.experimental_set_query_params(tab="home")
+    active_tab = "home"
 
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
 st.text("PI: Tek Raj Chhetri")
 
-
-def start():
+if active_tab == "home":
     with st.sidebar:
         # https://github.com/streamlit/streamlit/issues/2058
         st.markdown(
@@ -118,8 +156,10 @@ def start():
                             else:
                                 pass
 
+                        st.session_state
+                        st.session_state["startlearning1"] = True
+                        if ("startlearning" in st.session_state and st.session_state["startlearning"]==True) or (st.session_state["startlearning1"]==True):
 
-                        if "startlearning" in st.session_state and st.session_state["startlearning"]==True:
 
                             if button_clicked and algorithm == "Notears":
                                 st.markdown(
@@ -161,11 +201,9 @@ def start():
                                     ontology_data = transform_graph_to_ontology(learned_dag)
 
                                     if ontology_data["status"]==1:
-                                        st.write(ontology_data["message"])
+                                        st.success("Learning process completed, go to visualise tab to perform reasoning")
                                     else:
                                         st.write(ontology_data["message"])
-
-                                    print(ontology_data)
 
                             else:
                                 st.code({"Select algorithm"})
@@ -175,8 +213,14 @@ def start():
         except Exception as e:
             error = RuntimeError('Error occured while uploading file.')
             st.exception(e)
-
-
-if __name__ == '__main__':
-    # remove_files()
-    start()
+elif active_tab == "visualise":
+    selected_obj_prop = st.selectbox(
+        label='Query results by influcing Nodes',
+        options=(get_all_obj_properties()),
+    )
+    triples_for_viz = filter_by_obj_property(selected_obj_prop)
+    visualize_triples(triples_for_viz)
+elif active_tab == "about":
+    display_logo()
+else:
+    st.error("Something has gone terribly wrong.")
