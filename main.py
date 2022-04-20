@@ -26,11 +26,11 @@ def start():
             """
             <style>
             [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-                width: 600px;
+                width: 400px;
             }
             [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
-                width: 500px;
-                margin-left: -500px;
+                width: 400px;
+                margin-left: -400px;
             }
             </style>
             """,
@@ -158,9 +158,14 @@ def start():
                                     st.error(zero_error())
                                 else:
                                     display_learned_graph(learned_dag)
-                                    dagdf = to_convert_to_SDOW_format(learned_dag)
-                                    dagdf.to_csv("b.csv")
-                                    st.write(dagdf)
+                                    ontology_data = transform_graph_to_ontology(learned_dag)
+
+                                    if ontology_data["status"]==1:
+                                        st.write(ontology_data["message"])
+                                    else:
+                                        st.write(ontology_data["message"])
+
+                                    print(ontology_data)
 
                             else:
                                 st.code({"Select algorithm"})
