@@ -10,6 +10,13 @@
 https://user-images.githubusercontent.com/52251022/159111347-f51d3958-f0cf-44c5-9369-ac60fef3c250.mp4
 
  
+## Running
+After successfully running the docker command below, open localhost:8505 in browser.
+```
+bash docker_run.sh
+
+```
+
 ## Members
 - Tek Raj Chhetri (STI Innsbruck)
 - Sareh Aghaei (STI Innsbruck)
