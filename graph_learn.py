@@ -27,7 +27,6 @@ def is_dag(G):
     return nx.is_directed_acyclic_graph(G)
 
 
-
 def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
                                     tabuedge=None,
                                     use_bias=True,
@@ -78,15 +77,41 @@ def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
     else:
         return None
 
+
 def capitalise_word(input_word):
-    cap_word =  ''.join([word.capitalize() for word in input_word.split()])
+    cap_word = ''.join([word.capitalize() for word in input_word.split()])
     return cap_word.strip()
 
 
-def transform_graph_to_ontology(G):
-    """Take input networkx MultiDiGraph and convert to ontology
+def annotate_ontology(G, ontology, class_mapper, object_class_mapper, originated_domain, influence_domain):
+    """ Annotate the ontology
     :param G: networkx MultiDiGraph
-    :return: owl ontology or dictionary
+    :param ontology:  owlready2 instance of ontology or schema
+    :param class_mapper: owlready2 created ontology classes
+    :param object_class_mapper:  object properties
+    :param originated_domain:  data property
+    :param influence_domain: data property
+    :return: annotated ontology
+    """
+    annotated_ontology = ontology
+    with annotated_ontology:
+        for g in list(G.adjacency()):
+            if bool(g[1]):
+                for k in list(g[1].keys()):
+                    dataclass = class_mapper[capitalise_word(k)](capitalise_word(k).lower())
+                    object_class_mapper[f"isInfluencedBy{capitalise_word(g[0])}"][dataclass].append(
+                        class_mapper[capitalise_word(g[0])])
+                    originated_domain[f"isOriginatedFrom{capitalise_word(g[0])}"][dataclass].append(
+                        g[1][k][0]["origin"])
+                    influence_domain[f"hasInfluenceFactorOf{capitalise_word(g[0])}"][dataclass].append(
+                        g[1][k][0]["weight"])
+    return annotated_ontology
+
+
+def transform_graph_to_ontology(G):
+    """ Transform graph G into Ontology and annotate it
+    :param G: Networkx Graph
+    :return: dict indicating success or failure
     """
     class_mapper = {}
     object_class_mapper = {}
@@ -105,60 +130,28 @@ def transform_graph_to_ontology(G):
                     objpropclass_name = types.new_class(f"isInfluencedBy{capitalise_word(g[0])}", (ObjectProperty,))
                     objpropclass_name.domain.append(class_mapper[capitalise_word(g[0])])
                     objpropclass_name.range = [class_mapper[capitalise_word(word)] for word in list(g[1].keys())]
+                    object_class_mapper[f"isInfluencedBy{capitalise_word(g[0])}"] = objpropclass_name
 
                 for restriction_class_name in [word for word in list(g[1].keys())]:
                     datapropclass_name_origin = types.new_class(f"isOriginatedFrom{capitalise_word(g[0])}",
                                                                 (DataProperty, FunctionalProperty,))
                     datapropclass_name_origin.domain.append(class_mapper[capitalise_word(restriction_class_name)])
                     datapropclass_name_origin.range.append(str)
+                    originated_domain[f"isOriginatedFrom{capitalise_word(g[0])}"] = datapropclass_name_origin
 
                     datapropclass_name = types.new_class(f"hasInfluenceFactorOf{capitalise_word(g[0])}",
                                                          (DataProperty, FunctionalProperty,))
                     datapropclass_name.domain.append(class_mapper[capitalise_word(restriction_class_name)])
                     datapropclass_name.range = [float]
+                    influence_domain[f"hasInfluenceFactorOf{capitalise_word(g[0])}"] = datapropclass_name
 
-                    a = class_mapper[capitalise_word(restriction_class_name)](
-                        capitalise_word(restriction_class_name).lower())
-                    datapropclass_name_origin[a].append(g[1][restriction_class_name][0]["weight"])
-                    datapropclass_name[a].append(g[1][restriction_class_name][0]["origin"])
-
-        return onto_sensor
+        onto_save = annotate_ontology(G, onto_sensor, class_mapper, object_class_mapper, originated_domain,
+                                      influence_domain)
+        onto_save.save("generated_ontology.owl")
+        return {"status": 1, "message": "success"}
 
     else:
-        sys.stdout.write("Graph must be of type nx.classes.multidigraph.MultiDiGraph")
-
-
-def to_convert_to_SDOW_format(G):
-    """ Convert to dataframe for KG
-    :param graph: networkx graph
-    :return: pandas DataFrame
-    """
-    list_for_df = []
-    graph = G.adjacency()
-    if is_networkxgraph(G):
-        for adjacency_graph_dictionary in graph:
-            # print(adjacency_graph_dictionary)
-            source = adjacency_graph_dictionary[0]
-            for dest in adjacency_graph_dictionary[1]:
-                if type(G) == nx.classes.multidigraph.MultiDiGraph:
-                    make_df_list = [source,
-                                        dest,
-                                        adjacency_graph_dictionary[1][dest][0]["origin"],
-                                        adjacency_graph_dictionary[1][dest][0]["weight"]
-                                        ]
-                    list_for_df.append(make_df_list)
-
-                elif type(G) == nx.classes.multidigraph.DiGraph:
-                    make_df_list = [source,
-                                        dest,
-                                        adjacency_graph_dictionary[1][dest]["origin"],
-                                        adjacency_graph_dictionary[1][dest]["weight"]
-                                        ]
-                    list_for_df.append(make_df_list)
-
-
-
-        return pd.DataFrame(list_for_df, columns=["Source", "Destination", "Origin", "Weight"])
+        return {"status": 0, "message": "Graph must be of type nx.classes.multidigraph.MultiDiGraph"}
 
 def is_same(source, destination):
     if source == destination:
