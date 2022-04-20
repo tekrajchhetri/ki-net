@@ -14,6 +14,7 @@ from helper import convert_agraph_node
 from helper import convert_agraph_edge
 from helper import gaph_config
 from helper import zero_error
+from helper import get_owl_file
 from helper import  is_networkxgraph
 from helper import invalid_selection
 import types
@@ -108,6 +109,7 @@ def annotate_ontology(G, ontology, class_mapper, object_class_mapper, originated
     return annotated_ontology
 
 
+
 def transform_graph_to_ontology(G):
     """ Transform graph G into Ontology and annotate it
     :param G: Networkx Graph
@@ -147,7 +149,7 @@ def transform_graph_to_ontology(G):
 
         onto_save = annotate_ontology(G, onto_sensor, class_mapper, object_class_mapper, originated_domain,
                                       influence_domain)
-        onto_save.save("generated_ontology.owl")
+        onto_save.save(get_owl_file())
         return {"status": 1, "message": "success"}
 
     else:

@@ -10,9 +10,10 @@ import os
 import glob
 import pandas as pd
 import streamlit as st
-from streamlit_agraph import Node, Edge, Config
+from rdflib import Graph
+from streamlit_agraph import Node, Edge, Config, TripleStore, agraph
 import networkx as nx
-
+import textwrap
 def remove_files():
     if os.path.isdir("data"):
         files = glob.glob('data/*')
@@ -46,6 +47,7 @@ def read_file(uploaded_file, file_details):
 def select_algorithm():
     option = st.selectbox(
         label='Select Optimisation Algorithm',
+        key='algorithm_select',
         options=('Select Algorithm', 'Notears'),
     )
 
@@ -151,7 +153,57 @@ def check_hidden_layer_input(input_text):
     else:
         return None
 
+def get_owl_file():
+    return "generated_ontology.owl"
 
+def sparql_prefix():
+    prefix = textwrap.dedent(""" 
+               PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+           """)
+    return prefix
+def get_all_obj_properties():
+    graph = Graph()
+    graph.parse(get_owl_file())
+    q = """
+    SELECT   ?o ?p  
+               WHERE { ?s rdf:type owl:NamedIndividual ;
+               ?p ?o. 
+               FILTER regex(str(?p), "isInfluencedBy")
+               }
+               """
+    qres = graph.query(q)
+    return pd.DataFrame(tuple(set([p.split("#")[1] for o, p in qres])))
 
+def filter_by_obj_property(prop_name):
+    graph = Graph()
+    graph.parse(get_owl_file())
+    q = textwrap.dedent("""
+            {0}
+           SELECT  ?o  ?p ?s 
+           WHERE {{ ?s rdf:type owl:NamedIndividual ;
+           ?p ?o. 
+           FILTER(?p = :{1})
+           }}
+        """).format(sparql_prefix(), prop_name)
+    tripes = graph.query(q)
+    return tripes
 
+def visualize_triples(triples):
+    config = Config(width=900,
+                    height=900,
+                    directed=True,
+                    nodeHighlightBehavior=True,
+                    highlightColor="#F7A7A6",  # or "blue"
+                    collapsible=True,
+                    node={'labelProperty': 'label'},
+                    link={'labelProperty': 'label', 'renderLabel': True}
+                    # **kwargs e.g. node_size=1000 or node_color="blue"
+                    )
+
+    store = TripleStore()
+
+    for subj, pred, obj in triples:
+        store.add_triple(subj, pred, obj, "")
+
+    return agraph(list(store.getNodes()), list(store.getEdges()), config)
 
