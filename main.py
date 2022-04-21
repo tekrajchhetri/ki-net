@@ -245,12 +245,11 @@ elif active_tab == "sematicreason":
 elif active_tab == "about":
     st.markdown("""
     ## Participating Institutions
-    
     """)
     display_logo()
     st.markdown("""
     ## Collaborators
-- Tek Raj Chhetri (PI)
+- [Tek Raj Chhetri (PI)](https://tekrajchhetri.com)
 - Sareh Aghaei 
 - Jorge Martinez-Gil 
 - Sebnem Gül-Ficici
