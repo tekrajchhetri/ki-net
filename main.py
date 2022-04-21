@@ -214,12 +214,27 @@ if active_tab == "home":
             st.exception(e)
 elif active_tab == "sematicreason":
     st.text("PI: Tek Raj Chhetri")
+
     selected_obj_prop = st.selectbox(
         label='Query results by influcing Nodes',
         options=(get_all_obj_properties()),
     )
     triples_for_viz = filter_by_obj_property(selected_obj_prop)
     visualize_triples(triples_for_viz)
+    selected_data_prop_value = st.selectbox(
+        label='Filter by influence factor',
+        options=(get_all_data_properties_decimals()),
+    )
+    triples_for_viz_wt = filter_by_data_property_value(selected_data_prop_value)
+    visualize_triples(triples_for_viz_wt)
+
+    selected_data_prop_value_type = st.selectbox(
+        label='Filter by graph type',
+        options=('learned','expert'),
+    )
+    triples_for_viz_wt_type = filter_by_data_property_value_type(selected_data_prop_value)
+    visualize_triples(triples_for_viz_wt_type)
+
 elif active_tab == "about":
     st.markdown("""
     ## Participating Institutions

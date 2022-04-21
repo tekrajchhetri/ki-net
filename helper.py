@@ -174,6 +174,25 @@ def get_all_obj_properties():
     qres = graph.query(q)
     return pd.DataFrame(tuple(set([p.split("#")[1] for o, p in qres])))
 
+
+
+
+def get_all_data_properties_decimals():
+    graph = Graph()
+    graph.parse(get_owl_file())
+    q = """ 
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+             SELECT   ?o ?p  
+               WHERE { ?s rdf:type owl:NamedIndividual ;
+               ?p ?o. 
+               FILTER (datatype(?o)=xsd:decimal)
+               }
+            """
+    qres = graph.query(q)
+    return pd.DataFrame(tuple(set([o for o, p in qres])))
+
+
+
 def filter_by_obj_property(prop_name):
     graph = Graph()
     graph.parse(get_owl_file())
@@ -188,6 +207,36 @@ def filter_by_obj_property(prop_name):
     tripes = graph.query(q)
     return tripes
 
+
+
+def filter_by_data_property_value(dp_value):
+    graph = Graph()
+    graph.parse(get_owl_file())
+    q = textwrap.dedent("""
+            {0}
+           SELECT  ?o  ?p ?s 
+           WHERE {{ ?s rdf:type owl:NamedIndividual ;
+           ?p ?o. 
+           FILTER(?o >= {1})
+           }}
+        """).format(sparql_prefix(), dp_value)
+    tripes = graph.query(q)
+    return tripes
+
+def filter_by_data_property_value_type(dp_value):
+    graph = Graph()
+    graph.parse(get_owl_file())
+    q = textwrap.dedent("""
+            {0}
+           SELECT  ?o  ?p ?s 
+           WHERE {{ ?s rdf:type owl:NamedIndividual ;
+           ?p ?o. 
+           FILTER(?o = {1})
+           }}
+        """).format(sparql_prefix(), dp_value)
+    tripes = graph.query(q)
+    return tripes
+
 def visualize_triples(triples):
     config = Config(width=900,
                     height=900,
@@ -197,7 +246,6 @@ def visualize_triples(triples):
                     collapsible=True,
                     node={'labelProperty': 'label'},
                     link={'labelProperty': 'label', 'renderLabel': True}
-                    # **kwargs e.g. node_size=1000 or node_color="blue"
                     )
 
     store = TripleStore()
@@ -206,4 +254,7 @@ def visualize_triples(triples):
         store.add_triple(subj, pred, obj, "")
 
     return agraph(list(store.getNodes()), list(store.getEdges()), config)
+
+
+
 
