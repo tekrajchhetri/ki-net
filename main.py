@@ -28,7 +28,7 @@ st.markdown("""
         <a class="nav-link" href="?tab=home">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="?tab=visualise">Visualise</a>
+        <a class="nav-link" href="?tab=sematicreason">Semantic Reasoning</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="?tab=about">About</a>
@@ -50,14 +50,15 @@ if "tab" in query_params:
 else:
     active_tab = "home"
 
-if active_tab not in ['home','about','visualise']:
+if active_tab not in ['home','about','sematicreason']:
     st.experimental_set_query_params(tab="home")
     active_tab = "home"
 
 st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
-st.text("PI: Tek Raj Chhetri")
+
 
 if active_tab == "home":
+    st.text("PI: Tek Raj Chhetri")
     with st.sidebar:
         # https://github.com/streamlit/streamlit/issues/2058
         st.markdown(
@@ -156,9 +157,7 @@ if active_tab == "home":
                             else:
                                 pass
 
-                        st.session_state
-                        st.session_state["startlearning1"] = True
-                        if ("startlearning" in st.session_state and st.session_state["startlearning"]==True) or (st.session_state["startlearning1"]==True):
+                        if "startlearning" in st.session_state and st.session_state["startlearning"]==True:
 
 
                             if button_clicked and algorithm == "Notears":
@@ -213,7 +212,8 @@ if active_tab == "home":
         except Exception as e:
             error = RuntimeError('Error occured while uploading file.')
             st.exception(e)
-elif active_tab == "visualise":
+elif active_tab == "sematicreason":
+    st.text("PI: Tek Raj Chhetri")
     selected_obj_prop = st.selectbox(
         label='Query results by influcing Nodes',
         options=(get_all_obj_properties()),
@@ -221,6 +221,19 @@ elif active_tab == "visualise":
     triples_for_viz = filter_by_obj_property(selected_obj_prop)
     visualize_triples(triples_for_viz)
 elif active_tab == "about":
+    st.markdown("""
+    ## Participating Institutions
+    
+    """)
     display_logo()
+    st.markdown("""
+    ## Collaborators
+- Tek Raj Chhetri (PI)
+- Sareh Aghaei 
+- Jorge Martinez-Gil 
+- Sebnem Gül-Ficici
+- Anna Fensel 
+- Ulrich Göhner 
+    """)
 else:
     st.error("Something has gone terribly wrong.")
