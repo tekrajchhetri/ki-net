@@ -200,7 +200,7 @@ if active_tab == "home":
                                     ontology_data = transform_graph_to_ontology(learned_dag)
 
                                     if ontology_data["status"]==1:
-                                        st.success("Learning process completed, go to visualise tab to perform reasoning")
+                                        st.success("Learning process completed, go to Semantic Reasoning page to perform reasoning")
                                     else:
                                         st.write(ontology_data["message"])
 
