@@ -226,14 +226,13 @@ def filter_by_data_property_value(dp_value):
 def filter_by_data_property_value_type(dp_value):
     graph = Graph()
     graph.parse(get_owl_file())
-    q = textwrap.dedent("""
-            {0}
-           SELECT  ?o  ?p ?s 
+    q = textwrap.dedent("""  SELECT  ?o  ?p ?s 
            WHERE {{ ?s rdf:type owl:NamedIndividual ;
            ?p ?o. 
-           FILTER(?o = {1})
+           FILTER(?o ='{0}')
            }}
-        """).format(sparql_prefix(), dp_value)
+        """).format(dp_value)
+    print(q)
     tripes = graph.query(q)
     return tripes
 

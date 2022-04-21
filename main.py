@@ -232,7 +232,7 @@ elif active_tab == "sematicreason":
         label='Filter by graph type',
         options=('learned','expert'),
     )
-    triples_for_viz_wt_type = filter_by_data_property_value_type(selected_data_prop_value)
+    triples_for_viz_wt_type = filter_by_data_property_value_type(selected_data_prop_value_type)
     visualize_triples(triples_for_viz_wt_type)
 
 elif active_tab == "about":
