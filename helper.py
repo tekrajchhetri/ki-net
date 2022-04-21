@@ -232,7 +232,6 @@ def filter_by_data_property_value_type(dp_value):
            FILTER(?o ='{0}')
            }}
         """).format(dp_value)
-    print(q)
     tripes = graph.query(q)
     return tripes
 
