@@ -58,7 +58,7 @@ st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge 
 
 
 if active_tab == "home":
-    st.text("PI: Tek Raj Chhetri")
+    # st.text("PI: Tek Raj Chhetri")
     with st.sidebar:
         # https://github.com/streamlit/streamlit/issues/2058
         st.markdown(
@@ -234,7 +234,7 @@ elif active_tab == "sematicreason":
                     options=(get_all_data_properties_decimals()),
                 )
                 triples = filter_by_data_property_value(selected_data_prop_value)
-            elif 'knowledge graphs' in options_selected:
+            elif 'basis of Graphs' in options_selected:
                 selected_data_prop_value_type = st.selectbox(
                     label='Filter by graph type',
                     options=('learned', 'expert'),
