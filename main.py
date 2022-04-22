@@ -65,11 +65,11 @@ if active_tab == "home":
             """
             <style>
             [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-                width: 400px;
+                width: 500px;
             }
             [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
-                width: 400px;
-                margin-left: -400px;
+                width: 500px;
+                margin-left: -500px;
             }
             </style>
             """,
@@ -213,32 +213,38 @@ if active_tab == "home":
             error = RuntimeError('Error occured while uploading file.')
             st.exception(e)
 elif active_tab == "sematicreason":
-    with st.sidebar:
-        options_selected = st.radio(
-            "Select Semantic Reasoning Option",
-            ('Reasoning on the basis of Influencing Nodes', 'Reasoning on the basis of Influencing Factor', 'Reasoning on the basis of Graphs'))
+    try:
+        with st.sidebar:
 
-        if 'Influencing Nodes' in options_selected:
+            options_selected = st.radio(
+                "Select Semantic Reasoning Option",
+                ('Reasoning on the basis of Influencing Nodes', 'Reasoning on the basis of Influencing Factor', 'Reasoning on the basis of Graphs'))
 
-            selected_obj_prop = st.selectbox(
-                label='Query results by Influencing Nodes',
-                options=(get_all_obj_properties()),
-            )
+            if 'Influencing Nodes' in options_selected:
 
-            triples = filter_by_obj_property(selected_obj_prop)
-        elif 'Influencing Factor' in options_selected:
-            selected_data_prop_value = st.selectbox(
-                label='Filter by influence factor',
-                options=(get_all_data_properties_decimals()),
-            )
-            triples = filter_by_data_property_value(selected_data_prop_value)
-        elif 'knowledge graphs' in options_selected:
-            selected_data_prop_value_type = st.selectbox(
-                label='Filter by graph type',
-                options=('learned', 'expert'),
-            )
-            triples = filter_by_data_property_value_type(selected_data_prop_value_type)
-    visualize_triples(triples)
+                selected_obj_prop = st.selectbox(
+                    label='Query results by Influencing Nodes',
+                    options=(get_all_obj_properties()),
+                )
+
+                triples = filter_by_obj_property(selected_obj_prop)
+            elif 'Influencing Factor' in options_selected:
+                selected_data_prop_value = st.selectbox(
+                    label='Filter by influence factor',
+                    options=(get_all_data_properties_decimals()),
+                )
+                triples = filter_by_data_property_value(selected_data_prop_value)
+            elif 'knowledge graphs' in options_selected:
+                selected_data_prop_value_type = st.selectbox(
+                    label='Filter by graph type',
+                    options=('learned', 'expert'),
+                )
+                triples = filter_by_data_property_value_type(selected_data_prop_value_type)
+
+        visualize_triples(triples)
+    except:
+        st.warning("KG has not been generated properly/Eorror in KG/No data present in KG for selected reasoning")
+
 
 
 
