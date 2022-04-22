@@ -215,8 +215,8 @@ if active_tab == "home":
 elif active_tab == "sematicreason":
     with st.sidebar:
         options_selected = st.radio(
-            "Select Query",
-            ('Based on Influencing Nodes', 'Based on Influencing Factor', 'Based on the method by which knowledge graphs were generated'))
+            "Select Semantic Reasoning Option",
+            ('Reasoning on the basis of Influencing Nodes', 'Reasoning on the basis of Influencing Factor', 'Reasoning on the basis of Graphs'))
 
         if 'Influencing Nodes' in options_selected:
 
@@ -249,7 +249,7 @@ elif active_tab == "about":
     display_logo()
     st.markdown("""
     ## Collaborators
-- [Tek Raj Chhetri (PI)](https://tekrajchhetri.com)
+- [Tek Raj Chhetri](https://tekrajchhetri.com)
 - Sareh Aghaei 
 - Jorge Martinez-Gil 
 - Sebnem Gül-Ficici
