@@ -12,7 +12,7 @@ from graph_learn import *
 import warnings
 warnings.filterwarnings("ignore")
 st.set_option('deprecation.showPyplotGlobalUse', False)
-st.set_page_config('KI-Net: Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
+st.set_page_config('KI-Net: Optimising Manufacturing Process with Bayesian Structure Learning and Knowledge Graphs')
 
 st.markdown('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">', unsafe_allow_html=True)
 st.markdown('<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>', unsafe_allow_html=True)
@@ -54,7 +54,7 @@ if active_tab not in ['home','about','sematicreason']:
     st.experimental_set_query_params(tab="home")
     active_tab = "home"
 
-st.title('Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs')
+st.title('Optimising Manufacturing Process with Bayesian Structure Learning and Knowledge Graphs')
 
 
 if active_tab == "home":
