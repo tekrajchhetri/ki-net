@@ -7,6 +7,8 @@
 # @Software: PyCharm
 
 from causalnex.structure.pytorch.notears import from_pandas
+import numpy as np
+import random
 import networkx as nx
 import pandas as pd
 from streamlit_agraph import agraph
@@ -58,6 +60,8 @@ def start_linear_structure_learning(dataset, threshold, domainknowledge=None,
           f"lasso_beta:{lasso_beta}, "
           f"domainknowledge={domainknowledge} "
           f"ridge_beta:{ridge_beta}")
+    random.seed(43523423)
+    np.random.seed(43523423)
     sm = from_pandas(dataset,
                          tabu_edges=tabuedge,
                          use_bias=use_bias,
@@ -120,7 +124,7 @@ def transform_graph_to_ontology(G):
     originated_domain = {}
     influence_domain = {}
     if type(G) == nx.classes.multidigraph.MultiDiGraph:
-        onto_sensor = get_ontology("https://checking.owl#")
+        onto_sensor = get_ontology("https://schema.org/ChemicalSubstanc#")
         with onto_sensor:
             for class_name in list(G.nodes()):
                 capitalise_class_name = capitalise_word(class_name)
