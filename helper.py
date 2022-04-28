@@ -154,7 +154,7 @@ def check_hidden_layer_input(input_text):
         return None
 
 def get_owl_file():
-    return "generated_ontology.owl"
+    return "data/generated_ontology.owl"
 
 def sparql_prefix():
     prefix = textwrap.dedent(""" 
