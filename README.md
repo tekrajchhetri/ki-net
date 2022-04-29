@@ -1,6 +1,6 @@
 <img width="1438" alt="Screenshot 2022-04-21 at 23 20 19" src="https://user-images.githubusercontent.com/52251022/164550028-5011f32e-f08f-4a37-9b13-cdfd55a86cf5.png">
 
-# Optimising Manufacturing Process with Bayesian Learning and Knowledge Graphs
+# Optimising Manufacturing Process with Bayesian Structure Learning and Knowledge Graphs
  
 ## Running
 After successfully running the docker command below, open localhost:8505 in browser.
