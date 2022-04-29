@@ -23,5 +23,5 @@ bash docker_run.sh
 
 ## License
 
-&copy; STI Innsbruck, SCCH and Hochschule Kempten
+MIT
 
