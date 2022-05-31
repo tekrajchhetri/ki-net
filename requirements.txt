@@ -1,7 +1,9 @@
 causalnex==0.11.0
 networkx==2.7.1
+numpy==1.22.3
 Owlready2==0.37
 pandas==1.4.1
-scikit_learn
+rdflib==6.1.1
+scikit_learn==1.1.1
 streamlit==1.7.0
 streamlit_agraph==0.0.37
