@@ -5,5 +5,5 @@ Owlready2==0.37
 pandas==1.4.1
 rdflib==6.1.1
 scikit_learn==1.1.1
-streamlit==1.7.0
+streamlit==1.11.1
 streamlit_agraph==0.0.37
